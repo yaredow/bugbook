@@ -17,7 +17,7 @@ export const SignupSchema = z.object({
 export type SignupData = z.infer<typeof SignupSchema>;
 
 export const SigninSchema = z.object({
-  email: requiredString.email("Invalid email address"),
+  username: requiredString,
   password: requiredString.min(
     8,
     "Password must be at least 8 characters long",
