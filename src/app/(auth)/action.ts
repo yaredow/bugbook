@@ -1,6 +1,6 @@
 "use server";
 
-import { lucia } from "@/auth";
+import { lucia, validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import {
   SigninData,
@@ -14,6 +14,15 @@ import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verify } from "@node-rs/argon2";
+
+function setLuciaSessionCookie(sessionId: string) {
+  const sessionCookie = lucia.createSessionCookie(sessionId);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
+}
 
 export async function signup(
   credentials: SignupData,
@@ -44,10 +53,7 @@ export async function signup(
         },
       },
     });
-
-    if (existingUserName) {
-      return { error: "username already taken" };
-    }
+    if (existingUserName) return { error: "Username already taken" };
 
     const existingEmail = await prisma.user.findFirst({
       where: {
@@ -57,10 +63,7 @@ export async function signup(
         },
       },
     });
-
-    if (existingEmail) {
-      return { error: "email already exists" };
-    }
+    if (existingEmail) return { error: "Email already exists" };
 
     await prisma.user.create({
       data: {
@@ -73,12 +76,7 @@ export async function signup(
     });
 
     const session = await lucia.createSession(userId, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    );
+    setLuciaSessionCookie(session.id);
 
     return redirect("/");
   } catch (error) {
@@ -108,7 +106,6 @@ export async function signin(
         },
       },
     });
-
     if (!existingUser || !existingUser.passwordHash) {
       return { error: "Invalid credentials" };
     }
@@ -119,22 +116,32 @@ export async function signin(
       outputLen: 32,
       parallelism: 1,
     });
-
-    if (!isPasswordValid) {
-      return { error: "Invalid credentials" };
-    }
+    if (!isPasswordValid) return { error: "Invalid credentials" };
 
     const session = await lucia.createSession(existingUser.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    );
+    setLuciaSessionCookie(session.id);
 
     return redirect("/");
   } catch (error) {
     if (isRedirectError(error)) throw error;
     return { error: "Something went wrong" };
   }
+}
+
+export async function signout() {
+  const { session } = await validateRequest();
+
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  await lucia.invalidateSession(session.id);
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
+
+  return redirect("/signin");
 }
