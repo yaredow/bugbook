@@ -8,12 +8,11 @@ import {
   SignupData,
   SignupSchema,
 } from "@/lib/validation";
-import { hash } from "@node-rs/argon2";
 import { generateIdFromEntropySize } from "lucia";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verify } from "@node-rs/argon2";
+import bcrypt from "bcryptjs";
 
 function setLuciaSessionCookie(sessionId: string) {
   const sessionCookie = lucia.createSessionCookie(sessionId);
@@ -36,12 +35,7 @@ export async function signup(
 
     const { email, password, username } = validatedData.data;
 
-    const passwordHash = await hash(password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const userId = generateIdFromEntropySize(10);
 
@@ -71,7 +65,7 @@ export async function signup(
         email,
         username,
         displayName: username,
-        passwordHash,
+        password: passwordHash,
       },
     });
 
@@ -106,16 +100,16 @@ export async function signin(
         },
       },
     });
-    if (!existingUser || !existingUser.passwordHash) {
+
+    if (!existingUser || !existingUser.password) {
       return { error: "Invalid credentials" };
     }
 
-    const isPasswordValid = await verify(existingUser.passwordHash, password, {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    });
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+
     if (!isPasswordValid) return { error: "Invalid credentials" };
 
     const session = await lucia.createSession(existingUser.id, {});
