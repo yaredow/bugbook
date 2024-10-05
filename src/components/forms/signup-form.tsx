@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { useState, useTransition } from "react";
 import { signup } from "@/app/(auth)/action";
-import { PasswordInput } from "../passwordInput";
+import { PasswordInput } from "../password-input";
 import LoadingButton from "../loading-button";
 
 export default function SignupForm() {
@@ -40,7 +40,7 @@ export default function SignupForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         {error ? <p className="text-red-500">{error}</p> : null}
         <FormField
           control={form.control}

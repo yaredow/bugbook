@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { signin } from "@/app/(auth)/action";
 import LoadingButton from "../loading-button";
-import { PasswordInput } from "../passwordInput";
+import { PasswordInput } from "../password-input";
 import { Input } from "../ui/input";
 
 export default function SigninForm() {
@@ -45,7 +45,7 @@ export default function SigninForm() {
           control={form.control}
           name="username"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col items-start justify-start">
               <FormLabel>Username</FormLabel>
               <FormControl>
                 <Input placeholder="Username" {...field} />
@@ -54,11 +54,12 @@ export default function SigninForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col items-start justify-start">
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput placeholder="Password" {...field} />

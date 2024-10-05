@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div>bugbook</div>;
+  return <main>bugbook</main>;
 }
