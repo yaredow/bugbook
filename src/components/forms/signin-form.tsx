@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Form,
   FormControl,
@@ -9,8 +11,10 @@ import {
 import { SigninData, SigninSchema } from "@/lib/validation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { signin } from "@/app/(auth)/action";
+import LoadingButton from "../loading-button";
+import { PasswordInput } from "../passwordInput";
 import { Input } from "../ui/input";
 
 export default function SigninForm() {
@@ -28,42 +32,44 @@ export default function SigninForm() {
   const onSubmit = (values: SigninData) => {
     setError("");
     startTransition(async () => {
-      await signin(values).then((error) => {
-        if (error) setError(error);
-      });
+      const { error } = await signin(values);
+      if (error) setError(error);
     });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        {error && <p className="text-center text-destructive">{error}</p>}
         <FormField
-          name="username"
           control={form.control}
+          name="username"
           render={({ field }) => (
-            <FormItem className="item-start flex flex-col justify-start">
+            <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" type="text" {...field} />
+                <Input placeholder="Username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="username"
+          name="password"
           render={({ field }) => (
-            <FormItem className="item-start flex flex-col justify-start">
-              <FormLabel>Username</FormLabel>
+            <FormItem>
+              <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Username" type="text" {...field} />
+                <PasswordInput placeholder="Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <LoadingButton loading={isPending} type="submit" className="w-full">
+          Log in
+        </LoadingButton>
       </form>
     </Form>
   );

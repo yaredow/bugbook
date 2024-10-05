@@ -1,5 +1,5 @@
 import Image from "next/image";
-import SigninImage from "@/assets/login-image.jpg";
+import SignupImage from "@/assets/signup-image.jpg";
 import Link from "next/link";
 import SignupForm from "@/components/forms/signup-form";
 
@@ -28,7 +28,7 @@ export default function Page() {
         </div>
         <Image
           className="hidden w-1/2 object-cover md:block"
-          src={SigninImage}
+          src={SignupImage}
           alt="a photo of a group of people in an office"
         />
       </div>
