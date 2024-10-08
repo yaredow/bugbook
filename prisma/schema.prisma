@@ -25,7 +25,7 @@ model User {
   sessions    Session[]
 
   createdAt DateTime @default(now())
-  Posts     Post[]
+  posts     Post[]
 
   @@map("users")
 }
@@ -46,4 +46,6 @@ model Post {
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+
+  @@map("posts")
 }
