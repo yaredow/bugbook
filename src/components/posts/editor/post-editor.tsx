@@ -21,6 +21,7 @@ export default function PostEditor() {
         placeholder: "What's on your mind?",
       }),
     ],
+    immediatelyRender: false,
   });
 
   const input =
