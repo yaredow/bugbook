@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 
 export default function ForYouFeed() {
   const { data, isFetching, error } = useGetPosts();
+  console.log({ data });
 
   if (isFetching) return <Loader2 className="mx-auto animate-spin" />;
 
@@ -16,5 +17,5 @@ export default function ForYouFeed() {
       </p>
     );
 
-  return <>{data?.map((post) => <Post key={post.id} post={post} />)}</>;
+  return <div>{data?.map((post) => <Post key={post.id} post={post} />)}</div>;
 }
