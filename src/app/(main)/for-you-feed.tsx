@@ -1,6 +1,7 @@
 "use client";
 
 import InfinitScrollContainer from "@/components/infinite-scroll-container";
+import DeletePostDialogue from "@/components/posts/delete-post-dialogue";
 import Post from "@/components/posts/post";
 import PostsLoadingSkeleton from "@/components/posts/posts-loading-skeleton";
 import useGetPosts from "@/hooks/useGetPosts";
