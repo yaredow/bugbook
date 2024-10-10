@@ -2,6 +2,7 @@
 
 import InfinitScrollContainer from "@/components/infinite-scroll-container";
 import Post from "@/components/posts/post";
+import PostsLoadingSkeleton from "@/components/posts/posts-loading-skeleton";
 import useGetPosts from "@/hooks/useGetPosts";
 import { Loader2 } from "lucide-react";
 
@@ -17,7 +18,7 @@ export default function ForYouFeed() {
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
-  if (isFetching) return <Loader2 className="mx-auto animate-spin" />;
+  if (isFetching) return <PostsLoadingSkeleton />;
 
   if (status === "success" && !posts.length && !hasNextPage) {
     return (

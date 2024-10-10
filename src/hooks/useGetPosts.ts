@@ -1,5 +1,5 @@
 import kyInstance from "@/lib/ky";
-import { PostPage } from "@/lib/types";
+import { PostsPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function useGetPosts() {
@@ -10,6 +10,7 @@ export default function useGetPosts() {
     isFetching,
     isFetchingNextPage,
     status,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["post-feed", "for-you"],
     queryFn: ({ pageParam }) =>
@@ -18,7 +19,7 @@ export default function useGetPosts() {
           "/api/posts/for-you",
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
-        .json<PostPage>(),
+        .json<PostsPage>(),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
@@ -30,5 +31,6 @@ export default function useGetPosts() {
     hasNextPage,
     isFetchingNextPage,
     status,
+    refetch,
   };
 }

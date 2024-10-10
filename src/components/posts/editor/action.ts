@@ -2,6 +2,7 @@
 
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
+import { PostDataIncludes } from "@/lib/types";
 import { CreatePostSchema } from "@/lib/validation";
 
 export async function submitPost(input: string) {
@@ -17,10 +18,13 @@ export async function submitPost(input: string) {
 
   const { content } = validatedFields.data;
 
-  await prisma.post.create({
+  const newPost = await prisma.post.create({
     data: {
       userId: user.id,
       content,
     },
+    include: PostDataIncludes,
   });
+
+  return newPost;
 }
