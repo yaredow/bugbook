@@ -15,9 +15,17 @@ export default function ForYouFeed() {
     status,
   } = useGetPosts();
 
-  const posts = data?.pages.flatMap((page) => page.posts);
+  const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (isFetching) return <Loader2 className="mx-auto animate-spin" />;
+
+  if (status === "success" && !posts.length && !hasNextPage) {
+    return (
+      <p className="text-center text-muted-foreground">
+        No one has posted anything yet.
+      </p>
+    );
+  }
 
   if (status === "error")
     return (
@@ -31,8 +39,11 @@ export default function ForYouFeed() {
       className="space-y-5"
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
-      {posts?.map((post) => <Post key={post.id} post={post} />)}
-      {isFetchingNextPage && <Loader2 className="mx-auto animate-spin" />}
+      {posts.map((post) => (
+        <Post key={post.id} post={post} />
+      ))}
+
+      {isFetchingNextPage && <Loader2 className="mx-auto my-10 animate-spin" />}
     </InfinitScrollContainer>
   );
 }
