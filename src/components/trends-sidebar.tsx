@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { formatNumber } from "@/lib/utils";
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
+import FollowButton from "./follow-button";
 
 export default function TrendsSidebar() {
   return (
@@ -44,7 +45,7 @@ export async function WhoToFollow() {
                 @{user.username}
               </p>
             </div>
-            <Button>Follow</Button>
+            <FollowButton />
           </div>
         ))}
       </div>
