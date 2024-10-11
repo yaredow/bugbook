@@ -6,7 +6,7 @@ import PostsLoadingSkeleton from "@/components/posts/posts-loading-skeleton";
 import useGetPosts from "@/hooks/useGetPosts";
 import { Loader2 } from "lucide-react";
 
-export default function ForYouFeed() {
+export default function FollowingFeed() {
   const {
     data,
     isFetching,
@@ -14,7 +14,7 @@ export default function ForYouFeed() {
     fetchNextPage,
     hasNextPage,
     status,
-  } = useGetPosts(true);
+  } = useGetPosts(false);
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
@@ -23,7 +23,7 @@ export default function ForYouFeed() {
   if (status === "success" && !posts.length && !hasNextPage) {
     return (
       <p className="text-center text-muted-foreground">
-        No one has posted anything yet.
+        No pst found. You can follow some users to see their posts.
       </p>
     );
   }

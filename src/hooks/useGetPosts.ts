@@ -2,7 +2,7 @@ import kyInstance from "@/lib/ky";
 import { PostsPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-export default function useGetPosts() {
+export default function useGetPosts(forYou: boolean) {
   const {
     data,
     fetchNextPage,
@@ -12,11 +12,11 @@ export default function useGetPosts() {
     status,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "for-you"],
+    queryKey: ["post-feed", `${forYou ? "for-you" : "following"}`],
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          "/api/posts/for-you",
+          `/api/posts/${forYou ? "for-you" : "following"}`,
           pageParam ? { searchParams: { cursor: pageParam } } : {},
         )
         .json<PostsPage>(),

@@ -1,26 +1,38 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { getPostDataInclude, PostsPage } from "@/lib/types";
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
+    const { user } = await validateRequest();
     const cursor = request.nextUrl.searchParams.get("cursor") || undefined;
     const pageSize = 10;
-    const { user } = await validateRequest();
 
     if (!user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const posts = await prisma.post.findMany({
-      include: getPostDataInclude(user.id),
+      where: {
+        user: {
+          followers: {
+            some: {
+              followerId: user.id,
+            },
+          },
+        },
+      },
+
       orderBy: {
         createdAt: "desc",
       },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
+      include: getPostDataInclude(user.id),
     });
+
+    console.log("from following", posts);
 
     const nextCursor = posts.length > pageSize ? posts[pageSize].id : null;
 
@@ -37,7 +49,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "Internal server error" },
+      { error: "Ineternal server error" },
       { status: 500 },
     );
   }
