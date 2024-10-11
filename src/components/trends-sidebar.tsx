@@ -3,7 +3,6 @@ import { Loader } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import UserAvatar from "./user-avater";
-import { Button } from "./ui/button";
 import { formatNumber } from "@/lib/utils";
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
@@ -45,7 +44,15 @@ export async function WhoToFollow() {
                 @{user.username}
               </p>
             </div>
-            <FollowButton />
+            <FollowButton
+              userId={user.id}
+              initialState={{
+                isFollowedByUser: user.followers.some(
+                  ({ followerId }) => followerId === user.id,
+                ),
+                followers: user._count.followers,
+              }}
+            />
           </div>
         ))}
       </div>

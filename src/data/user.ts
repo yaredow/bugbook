@@ -1,7 +1,6 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import { UserDataSelect } from "@/lib/types";
-import { unstable_cache } from "next/cache";
+import { getUserDataSelect } from "@/lib/types";
 
 export async function getWhoToFollow() {
   const { user } = await validateRequest();
@@ -13,8 +12,13 @@ export async function getWhoToFollow() {
       NOT: {
         id: user.id,
       },
+      followers: {
+        none: {
+          followerId: user.id,
+        },
+      },
     },
-    select: UserDataSelect,
+    select: getUserDataSelect(user.id),
     take: 5,
   });
 

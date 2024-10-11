@@ -1,20 +1,20 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import { PostDataIncludes, PostPage } from "@/lib/types";
+import { getPostDataInclude, PostsPage } from "@/lib/types";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const cursor = request.nextUrl.searchParams.get("cursor");
     const pageSize = 10;
-    const user = await validateRequest();
+    const { user } = await validateRequest();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const posts = await prisma.post.findMany({
-      include: PostDataIncludes,
+      include: getPostDataInclude(user.id),
       orderBy: {
         createdAt: "desc",
       },
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    const data: PostPage = {
+    const data: PostsPage = {
       posts: posts.slice(0, pageSize),
       nextCursor,
     };

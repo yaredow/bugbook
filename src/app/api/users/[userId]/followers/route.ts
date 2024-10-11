@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { FollowerInfor } from "@/lib/types";
 
 export async function GET({
+  request: Request,
   params: { userId },
 }: {
   params: { userId: string };
@@ -51,16 +52,15 @@ export async function GET({
   }
 }
 
-export async function POST({
-  params: { userId },
-}: {
-  params: { userId: string };
-}) {
+export async function POST(
+  request: Request,
+  { params: { userId } }: { params: { userId: string } },
+) {
   try {
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unautherized" }, { status: 401 });
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await prisma.follow.upsert({
@@ -76,6 +76,7 @@ export async function POST({
       },
       update: {},
     });
+
     return new Response();
   } catch (error) {
     console.error(error);
@@ -83,16 +84,15 @@ export async function POST({
   }
 }
 
-export async function DELETE({
-  params: { userId },
-}: {
-  params: { userId: string };
-}) {
+export async function DELETE(
+  request: Request,
+  { params: { userId } }: { params: { userId: string } },
+) {
   try {
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unautherized" }, { status: 401 });
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await prisma.follow.deleteMany({

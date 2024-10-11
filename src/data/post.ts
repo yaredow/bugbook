@@ -1,18 +1,27 @@
+import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import { PostDataIncludes } from "@/lib/types";
+import { getPostDataIncludes } from "@/lib/types";
 import { unstable_cache } from "next/cache";
 
 export async function getPosts() {
-  const posts = await prisma.post.findMany({
-    include: PostDataIncludes,
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  try {
+    const { user } = await validateRequest();
 
-  if (!posts) return null;
+    if (!user) return null;
+    const posts = await prisma.post.findMany({
+      include: getPostDataIncludes(user.id),
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-  return posts;
+    if (!posts) return null;
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 export const getTrendingTopics = unstable_cache(
