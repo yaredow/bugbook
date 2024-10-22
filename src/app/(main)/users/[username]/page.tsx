@@ -11,6 +11,7 @@ import { formatDate } from "date-fns";
 import { Metadata } from "next";
 import { cache } from "react";
 import UserPosts from "./user-posts";
+import { notFound } from "next/navigation";
 
 type UserProfilePageProps = {
   params: {
@@ -28,6 +29,8 @@ const getUser = cache(async (username: string, loggedInUserId: string) => {
     },
     select: getUserDataSelect(loggedInUserId),
   });
+
+  if (!user) return notFound();
 
   return user;
 });
