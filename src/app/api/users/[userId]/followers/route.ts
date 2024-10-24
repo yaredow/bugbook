@@ -1,13 +1,15 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import { FollowerInfor } from "@/lib/types";
+import { FollowerInfo } from "@/lib/types";
 
-export async function GET({
+export async function GET(
   request: Request,
-  params: { userId },
-}: {
-  params: { userId: string };
-}) {
+  {
+    params: { userId },
+  }: {
+    params: { userId: string };
+  },
+) {
   try {
     const { user: loggedInUser } = await validateRequest();
 
@@ -40,7 +42,7 @@ export async function GET({
       return Response.json({ error: "User not found" }, { status: 404 });
     }
 
-    const data: FollowerInfor = {
+    const data: FollowerInfo = {
       followers: user._count.followers,
       isFollowedByUser: !!user.followers.length,
     };
@@ -54,7 +56,11 @@ export async function GET({
 
 export async function POST(
   request: Request,
-  { params: { userId } }: { params: { userId: string } },
+  {
+    params: { userId },
+  }: {
+    params: { userId: string };
+  },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();
@@ -86,7 +92,11 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params: { userId } }: { params: { userId: string } },
+  {
+    params: { userId },
+  }: {
+    params: { userId: string };
+  },
 ) {
   try {
     const { user: loggedInUser } = await validateRequest();

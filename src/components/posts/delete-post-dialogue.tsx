@@ -1,6 +1,5 @@
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -10,7 +9,6 @@ import {
 import { PostData } from "@/lib/types";
 import useDeletePostMutation from "./mutations";
 import LoadingButton from "../loading-button";
-import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 
 type DeletePostDialogueProps = {
